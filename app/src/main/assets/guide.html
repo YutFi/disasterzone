@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DisasterZone Malaysia Guide</title>
+    <style>
+        :root {
+            --primary: #0D47A1;
+            --accent: #D32F2F;
+            --bg: #F0F2F5;
+            --text: #333;
+            --white: #ffffff;
+            --green: #2E7D32;
+            --grey: #546E7A;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(135deg, var(--primary), #1565C0);
+            color: var(--white);
+            padding: 30px 20px 40px;
+            text-align: center;
+            border-bottom-left-radius: 25px;
+            border-bottom-right-radius: 25px;
+            box-shadow: 0 4px 12px rgba(13, 71, 161, 0.2);
+        }
+        h1 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
+        .subtitle { opacity: 0.9; margin-top: 5px; font-size: 14px; font-weight: 500; }
+
+        .container {
+            padding: 20px;
+            max-width: 600px;
+            margin: -30px auto 0; /* Pull up into header */
+        }
+
+        /* CARDS */
+        .card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.04);
+            border: 1px solid rgba(0,0,0,0.03);
+        }
+        .card-title {
+            color: var(--primary);
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .card-title span { margin-right: 8px; }
+
+        /* EMERGENCY BIG BUTTON */
+        .mers-container {
+            text-align: center;
+            background: linear-gradient(to bottom right, #FFEBEE, #FFCDD2);
+            border: 1px solid #FFCDD2;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+        .mers-label {
+            display: block;
+            color: var(--accent);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        .dial-btn-large {
+            display: block;
+            background-color: var(--accent);
+            color: white;
+            font-size: 32px;
+            font-weight: 900;
+            text-decoration: none;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(211, 47, 47, 0.3);
+            transition: transform 0.1s;
+        }
+        .dial-btn-large:active { transform: scale(0.98); }
+
+        /* ACTION BUTTONS GRID */
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .action-grid:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+        .info-col { display: flex; flex-direction: column; justify-content: center; }
+        .info-label { font-weight: 700; color: #333; font-size: 15px; }
+        .info-sub { font-size: 12px; color: #666; }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* BUTTON STYLES */
+        .btn {
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.2s;
+        }
+        .btn:active { opacity: 0.7; }
+
+        .btn-call {
+            background-color: var(--white);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+        }
+        .btn-call-solid {
+            background-color: var(--accent);
+            color: var(--white);
+            border: 1px solid var(--accent);
+        }
+        .btn-web {
+            background-color: var(--white);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        /* DOE DETAILS */
+        .doe-box {
+            background-color: #E3F2FD;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 13px;
+            color: var(--primary);
+        }
+
+        /* STEPS FOR HOW TO USE */
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        .step-num {
+            background: var(--primary);
+            color: white;
+            min-width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            margin-right: 12px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-top: 2px;
+        }
+        .step-content strong {
+            display: block;
+            color: var(--text);
+            margin-bottom: 2px;
+        }
+        .step-content {
+            font-size: 14px;
+            color: #555;
+        }
+
+        /* FOOTER */
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #90A4AE;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>DisasterZone</h1>
+    <div class="subtitle">Malaysia Emergency Directory</div>
+</header>
+
+<div class="container">
+
+    <div class="mers-container">
+        <span class="mers-label">Emergency Response Services</span>
+        <a href="tel:999" class="dial-btn-large">
+            📞 CALL 999
+        </a>
+        <p style="margin: 10px 0 0 0; font-size: 12px; color: #D32F2F;">
+            For Police, Fire, Ambulance, Civil Defense
+        </p>
+    </div>
+
+    <div class="card">
+        <div class="card-title"><span>⚠️</span> Disaster Specific Lines</div>
+
+        <div class="action-grid">
+            <div class="info-col">
+                <span class="info-label">Flood & Fire</span>
+                <span class="info-sub">Rescue Dept.</span>
+            </div>
+            <div class="btn-group">
+                <a href="tel:999" class="btn btn-call-solid">📞 Dial 999</a>
+            </div>
+        </div>
+
+        <div class="action-grid">
+            <div class="info-col">
+                <span class="info-label">Landslide / Sinkhole</span>
+                <span class="info-sub">Dept of Environment (DOE)</span>
+            </div>
+            <div class="btn-group">
+                <a href="tel:0388891972" class="btn btn-call">📞 Call</a>
+                <a href="https://www.doe.gov.my" class="btn btn-web">🌐 Web</a>
+            </div>
+        </div>
+
+        <div class="action-grid">
+            <div class="info-col">
+                <span class="info-label">Pollution Complaint</span>
+                <span class="info-sub">24 Hours Hotline</span>
+            </div>
+            <div class="btn-group">
+                <a href="tel:1800882727" class="btn btn-call">📞 Call</a>
+                <a href="https://www.doe.gov.my" class="btn btn-web">🌐 Web</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title"><span>🏢</span> Department of Environment</div>
+        <div class="doe-box">
+            <strong>HQ Putrajaya</strong><br>
+            Levels 1–4, Podium 2 & 3, Menara PETRA,<br>
+            No.25, Persiaran Perdana, Precint 4,<br>
+            62574 Putrajaya.
+        </div>
+
+        <div style="margin-top: 15px; display: flex; gap: 10px;">
+            <a href="tel:0388712000" class="btn btn-call" style="flex:1;">📞 General Line</a>
+            <a href="https://www.doe.gov.my" class="btn btn-web" style="flex:1;">🌐 Official Portal</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title"><span>📱</span> How to Use App</div>
+
+        <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+                <strong>Report an Incident</strong>
+                Tap the <span style="color:var(--accent); font-weight:bold;">Camera Icon</span> on the nav bar. Snap a photo of the disaster and submit.
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+                <strong>Check Real-Time Map</strong>
+                Tap the <span style="color:var(--primary); font-weight:bold;">Map Icon</span>. Red circles indicate dangerous zones (1km radius).
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+                <strong>Get Safety Alerts</strong>
+                Keep the app installed. You will receive an automatic alarm notification if you enter a danger zone.
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title"><span>ℹ️</span> About DisasterZone</div>
+        <p style="font-size: 14px; color: #555; margin: 0;">
+            DisasterZone is a community-driven response platform designed to keep Malaysians safe. By leveraging crowdsourced data and geolocation, we help you stay informed about nearby floods, fires, and accidents faster than traditional news.
+        </p>
+    </div>
+
+    <div class="card" style="border-left: 5px solid #FFC107;">
+        <div class="card-title" style="color:#FF6F00;"><span>📝</span> Notes for Caller</div>
+        <ul style="padding-left: 20px; font-size: 14px; margin: 0; color: #444;">
+            <li style="margin-bottom: 5px;"><strong>Stay Calm:</strong> Speak clearly to the operator.</li>
+            <li style="margin-bottom: 5px;"><strong>Location:</strong> Give exact address or landmarks.</li>
+            <li><strong>Safety First:</strong> Do not endanger yourself to report.</li>
+        </ul>
+    </div>
+
+</div>
+
+<footer>
+    &copy; 2026 DisasterZone Malaysia.<br>
+    A Community Safety Initiative.
+</footer>
+
+</body>
+</html>

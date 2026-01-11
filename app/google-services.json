@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "754701852688",
+    "project_id": "disasterzone-ae0f7",
+    "storage_bucket": "disasterzone-ae0f7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:754701852688:android:91158039bc395e036bea95",
+        "android_client_info": {
+          "package_name": "com.example.disasterzone"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAh-VwNuoAEn3jYYBPRZkW1Syomu2GnHCs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
