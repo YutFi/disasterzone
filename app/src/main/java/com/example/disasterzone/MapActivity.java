@@ -46,6 +46,7 @@ public class MapActivity extends AppCompatActivity {
 
         postsRef = FirebaseDatabase.getInstance().getReference("posts");
 
+        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
         checkPermissions();
         setupUserLocation(); // 2. Setup the location indicator
         loadDisasterMarkers();

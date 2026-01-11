@@ -1,41 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="16dp"
-    android:gravity="center_vertical"
-    android:background="@drawable/bg_bottom_sheet"> <ImageView
-    android:layout_width="40dp"
-    android:layout_height="40dp"
-    android:src="@android:drawable/stat_notify_chat"
-    android:padding="8dp"
-    android:background="@drawable/bg_chat_me"
-    android:backgroundTint="@color/emergency_blue_light"
-    android:tint="@color/white"/>
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="16dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <FrameLayout
+        android:id="@+id/iconContainer"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="@drawable/bg_circle_light_blue"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/imgNotifIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_notification"
+            app:tint="#1976D2" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tvNotifMessage"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginStart="16dp">
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:text="Someone commented on your disaster report."
+        android:textColor="#202124"
+        android:textSize="15sp"
+        android:textStyle="normal"
+        android:lineSpacingExtra="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iconContainer"
+        app:layout_constraintTop_toTopOf="@id/iconContainer" />
 
-        <TextView
-            android:id="@+id/tvNotifMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Someone liked your report"
-            android:textSize="16sp"
-            android:textColor="#000000"/>
+    <TextView
+        android:id="@+id/tvNotifTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:text="2 mins ago"
+        android:textColor="#5F6368"
+        android:textSize="13sp"
+        app:layout_constraintStart_toStartOf="@id/tvNotifMessage"
+        app:layout_constraintTop_toBottomOf="@id/tvNotifMessage" />
 
-        <TextView
-            android:id="@+id/tvNotifTime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Just now"
-            android:textSize="12sp"
-            android:textColor="#757575"
-            android:layout_marginTop="4dp"/>
-    </LinearLayout>
+    <View
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:background="#F1F3F4"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/tvNotifMessage"
+        app:layout_constraintTop_toBottomOf="@id/tvNotifTime" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

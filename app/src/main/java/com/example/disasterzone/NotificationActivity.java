@@ -3,7 +3,7 @@ package com.example.disasterzone;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,7 +26,9 @@ public class NotificationActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private NotificationAdapter adapter;
     private List<Notification> notificationList;
-    private TextView tvEmpty;
+
+    // Changed from TextView to LinearLayout to match new XML
+    private LinearLayout layoutEmptyState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,12 +36,16 @@ public class NotificationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_notification);
 
         // Setup Header Back Button
-        ImageView btnBack = findViewById(R.id.btnBack); // Ensure this ID exists in XML (or remove if using default)
-        if (btnBack != null) btnBack.setOnClickListener(v -> finish());
+        ImageView btnBack = findViewById(R.id.btnBack);
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> finish());
+        }
 
         // UI Setup
-        recyclerView = findViewById(R.id.listNotifications); // Ensure ID matches XML
-        tvEmpty = findViewById(R.id.tvEmptyState); // Create this TextView in XML or remove logic
+        recyclerView = findViewById(R.id.listNotifications);
+
+        // Find the new Empty State Container
+        layoutEmptyState = findViewById(R.id.layoutEmptyState);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         notificationList = new ArrayList<>();
@@ -50,6 +56,8 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
     private void loadNotifications() {
+        if (FirebaseAuth.getInstance().getCurrentUser() == null) return;
+
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference notifRef = FirebaseDatabase.getInstance().getReference("notifications").child(uid);
 
@@ -63,16 +71,17 @@ public class NotificationActivity extends AppCompatActivity {
                         notificationList.add(notif);
                     }
                 }
+
                 // Show newest alerts first
                 Collections.reverse(notificationList);
                 adapter.notifyDataSetChanged();
 
-                // Show/Hide Empty State
+                // Toggle visibility between List and Empty State
                 if (notificationList.isEmpty()) {
-                    if(tvEmpty != null) tvEmpty.setVisibility(View.VISIBLE);
+                    if (layoutEmptyState != null) layoutEmptyState.setVisibility(View.VISIBLE);
                     recyclerView.setVisibility(View.GONE);
                 } else {
-                    if(tvEmpty != null) tvEmpty.setVisibility(View.GONE);
+                    if (layoutEmptyState != null) layoutEmptyState.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.VISIBLE);
                 }
             }

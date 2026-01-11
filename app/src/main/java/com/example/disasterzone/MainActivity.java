@@ -9,7 +9,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // No layout needed, just routing
+
+        // Start Service Immediately
+        Intent intent = new Intent(this, NotificationService.class);
+        startService(intent);
 
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             startActivity(new Intent(this, FeedActivity.class));

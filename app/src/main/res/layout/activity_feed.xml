@@ -1,102 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_light">
+    android:background="#F8F9FA">
 
-    <LinearLayout
-        android:id="@+id/header"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/headerLayout"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="@color/white"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@android:color/white"
         android:elevation="4dp"
-        android:gravity="center_vertical"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:layout_width="0dp"
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_marginStart="20dp"
             android:text="DisasterZone"
+            android:textColor="#1A73E8"
             android:textSize="22sp"
             android:textStyle="bold"
-            android:textColor="@color/primary_blue"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/btnNavInfo"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:src="@android:drawable/ic_menu_info_details"
-            app:tint="@color/text_grey"
-            android:layout_marginEnd="16dp"/>
-
-        <ImageView
+        <FrameLayout
             android:id="@+id/btnNavNotif"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:src="@android:drawable/ic_popup_reminder"
-            app:tint="@color/text_dark"/>
-    </LinearLayout>
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="20dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_notification"
+                app:tint="#5F6368" />
+
+            <View
+                android:layout_width="8dp"
+                android:layout_height="8dp"
+                android:layout_gravity="top|end"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/bg_red_dot" />
+        </FrameLayout>
+
+        <ImageView
+            android:id="@+id/btnNavScan"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:src="@drawable/ic_qr_code"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnNavNotif"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="#5F6368" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/header"
-        android:layout_above="@id/bottomNav"
+        android:layout_height="0dp"
         android:clipToPadding="false"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"/>
+        android:paddingTop="12dp"
+        android:paddingBottom="88dp"
+        android:scrollbars="vertical"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavCard"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout"
+        tools:listitem="@layout/item_post" />
 
-    <LinearLayout
-        android:id="@+id/bottomNav"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/bottomNavCard"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/white"
-        android:elevation="16dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:weightSum="4">
+        android:layout_height="72dp"
+        app:cardBackgroundColor="@android:color/white"
+        app:cardCornerRadius="36dp"
+        app:cardElevation="6dp"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <ImageView
-            android:id="@+id/btnHome"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@android:drawable/ic_menu_gallery"
-            app:tint="@color/primary_blue"
-            android:padding="16dp"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/btnNavMap"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@android:drawable/ic_dialog_map"
-            app:tint="@color/text_grey"
-            android:padding="16dp"/>
+            <!-- Home Button -->
+            <ImageView
+                android:id="@+id/btnHome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="12dp"
+                android:src="@drawable/ic_home"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btnNavMap"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="#1A73E8" />
 
-        <ImageView
-            android:id="@+id/btnNavCamera"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@android:drawable/ic_menu_camera"
-            app:tint="@color/accent_red"
-            android:padding="12dp"/>
+            <!-- Map Button -->
+            <ImageView
+                android:id="@+id/btnNavMap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="12dp"
+                android:src="@drawable/ic_map"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btnNavCamera"
+                app:layout_constraintStart_toEndOf="@+id/btnHome"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="#9AA0A6" />
 
-        <ImageView
-            android:id="@+id/btnNavProfile"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:src="@android:drawable/ic_menu_myplaces"
-            app:tint="@color/text_grey"
-            android:padding="16dp"/>
+            <!-- Camera Button - Centered and aligned with others -->
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/btnNavCamera"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:backgroundTint="#1A73E8"
+                android:contentDescription="Report Disaster"
+                app:borderWidth="0dp"
+                app:elevation="8dp"
+                app:fabCustomSize="64dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btnNavInfo"
+                app:layout_constraintStart_toEndOf="@+id/btnNavMap"
+                app:layout_constraintTop_toTopOf="parent"
+                app:pressedTranslationZ="12dp"
+                app:rippleColor="#0D47A1"
+                app:srcCompat="@drawable/ic_camera_white"
+                app:tint="@android:color/white" />
 
-    </LinearLayout>
+            <!-- Info Button -->
+            <ImageView
+                android:id="@+id/btnNavInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="12dp"
+                android:src="@drawable/ic_info"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/btnNavProfile"
+                app:layout_constraintStart_toEndOf="@+id/btnNavCamera"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="#9AA0A6" />
 
-</RelativeLayout>
+            <!-- Profile Button -->
+            <ImageView
+                android:id="@+id/btnNavProfile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="12dp"
+                android:src="@drawable/ic_person"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/btnNavInfo"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="#9AA0A6" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,6 +10,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
+
     <queries>
         <intent>
             <action android:name="android.media.action.IMAGE_CAPTURE" />
@@ -51,6 +53,13 @@
         <activity android:name=".MapActivity" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".WebViewActivity" />
+        <activity android:name=".CommentActivity"/>
+        <activity android:name=".PostDetailActivity" />
 
+        <activity
+            android:name=".CaptureActivityPortrait"
+            android:screenOrientation="portrait"
+            android:stateNotNeeded="true"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
     </application>
 </manifest>

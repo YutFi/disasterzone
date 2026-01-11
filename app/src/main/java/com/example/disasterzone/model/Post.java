@@ -1,25 +1,25 @@
 package com.example.disasterzone.model;
 
 public class Post {
-    public String id;
-    public String uid;       // CHANGED: matched to FeedAdapter (was userId)
-    public String username;  // CHANGED: matched to FeedAdapter (was userName)
+    public String postId;
+    public String userId;
+    public String username;
     public String description;
-    public String imageBase64;
+    public String imageUrl; // <--- This was missing!
     public double latitude;
     public double longitude;
     public long timestamp;
 
-    // We don't store 'likes' integer here because we count them live from Firebase
+    // Default constructor required for Firebase
+    public Post() {
+    }
 
-    public Post() {} // Required for Firebase
-
-    public Post(String id, String uid, String username, String description, String imageBase64, double latitude, double longitude, long timestamp) {
-        this.id = id;
-        this.uid = uid;
+    public Post(String postId, String userId, String username, String description, String imageUrl, double latitude, double longitude, long timestamp) {
+        this.postId = postId;
+        this.userId = userId;
         this.username = username;
         this.description = description;
-        this.imageBase64 = imageBase64;
+        this.imageUrl = imageUrl;
         this.latitude = latitude;
         this.longitude = longitude;
         this.timestamp = timestamp;

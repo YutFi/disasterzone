@@ -1,19 +1,19 @@
 package com.example.disasterzone.model;
 
 public class Notification {
+    public String notificationId;
     public String message;
-    public String postId;
-    public String senderId;
+    public String type;
     public long timestamp;
 
+    // Empty constructor required for Firebase
     public Notification() {
-        // Empty constructor for Firebase
     }
 
-    public Notification(String message, String postId, String senderId, long timestamp) {
+    public Notification(String notificationId, String message, String type, long timestamp) {
+        this.notificationId = notificationId;
         this.message = message;
-        this.postId = postId;
-        this.senderId = senderId;
+        this.type = type;
         this.timestamp = timestamp;
     }
 }

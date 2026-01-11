@@ -56,7 +56,18 @@ dependencies {
 
     // Google Location Services (Required for FeedActivity location tracking)
     implementation 'com.google.android.gms:play-services-location:21.0.1'
+    implementation 'com.google.android.gms:play-services-maps:18.2.0'
 
     // Glide (For image loading from Base64/URL efficiently)
     implementation 'com.github.bumptech.glide:glide:4.16.0'
+
+    // QR Code Generator & Scanner
+    implementation 'com.journeyapps:zxing-android-embedded:4.3.0'
+    implementation 'com.google.zxing:core:3.4.1'
+
+    // Android UI stuff
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'com.google.android.material:material:1.5.0'
+
 }
