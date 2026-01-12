@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="24dp"
-            android:text="Help your community by providing details and a photo of the situation."
+            android:text="Help your community by providing details and a photo."
             android:textColor="#5F6368"
             android:textSize="14sp" />
 
@@ -37,9 +37,9 @@
             android:layout_width="match_parent"
             android:layout_height="280dp"
             android:layout_marginBottom="16dp"
+            app:cardBackgroundColor="#F1F3F4"
             app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            app:cardBackgroundColor="#F1F3F4">
+            app:cardElevation="0dp">
 
             <ImageView
                 android:id="@+id/imgPreview"
@@ -50,29 +50,50 @@
                 android:scaleType="centerCrop"
                 android:src="@android:drawable/ic_menu_camera"
                 app:tint="#B0B0B0" />
-
             <View
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/border_rounded_16dp" />
         </androidx.cardview.widget.CardView>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnCapture"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_marginBottom="24dp"
-            android:text="Capture Photo"
-            android:textColor="#1976D2"
-            app:icon="@android:drawable/ic_menu_camera"
-            app:iconTint="#1976D2"
-            app:iconGravity="textStart"
-            app:cornerRadius="12dp"
-            app:strokeColor="#1976D2"
-            app:strokeWidth="1dp" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:layout_marginBottom="24dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCapture"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="8dp"
+                android:text="Camera"
+                android:textColor="#1976D2"
+                app:cornerRadius="12dp"
+                app:icon="@android:drawable/ic_menu_camera"
+                app:iconTint="#1976D2"
+                app:strokeColor="#1976D2" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnGallery"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="56dp"
+                android:layout_weight="1"
+                android:layout_marginStart="8dp"
+                android:text="Gallery"
+                android:textColor="#1976D2"
+                app:cornerRadius="12dp"
+                app:icon="@android:drawable/ic_menu_gallery"
+                app:iconTint="#1976D2"
+                app:strokeColor="#1976D2" />
+        </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="32dp"
@@ -82,8 +103,7 @@
             app:boxCornerRadiusBottomStart="12dp"
             app:boxCornerRadiusTopEnd="12dp"
             app:boxCornerRadiusTopStart="12dp"
-            app:boxStrokeColor="#1976D2"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            app:boxStrokeColor="#1976D2">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etReportDesc"
@@ -115,8 +135,8 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_gravity="center"
-                android:indeterminateTint="@android:color/white"
                 android:elevation="10dp"
+                android:indeterminateTint="@android:color/white"
                 android:visibility="gone" />
         </FrameLayout>
 

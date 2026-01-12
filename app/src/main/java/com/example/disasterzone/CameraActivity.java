@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
@@ -34,16 +36,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 
 public class CameraActivity extends AppCompatActivity {
 
     private static final int CAMERA_REQUEST_CODE = 100;
+    private static final int GALLERY_REQUEST_CODE = 200; // New Code for Gallery
     private static final int CAMERA_PERMISSION_CODE = 101;
     private static final int PERMISSION_REQUEST_CODE = 102;
 
     private ImageView imgPreview;
     private EditText etReportDesc;
-    private Button btnCapture, btnUploadReport;
+    private Button btnCapture, btnGallery, btnUploadReport;
     private ProgressBar progressBar;
 
     private Bitmap capturedBitmap;
@@ -66,12 +70,15 @@ public class CameraActivity extends AppCompatActivity {
         imgPreview = findViewById(R.id.imgPreview);
         etReportDesc = findViewById(R.id.etReportDesc);
         btnCapture = findViewById(R.id.btnCapture);
+        btnGallery = findViewById(R.id.btnGallery); // Init new button
         btnUploadReport = findViewById(R.id.btnUploadReport);
         progressBar = findViewById(R.id.progressBar);
 
         checkPermissions();
 
+        // Button Listeners
         btnCapture.setOnClickListener(v -> askCameraPermission());
+        btnGallery.setOnClickListener(v -> openGallery()); // Gallery Listener
         btnUploadReport.setOnClickListener(v -> uploadPost());
     }
 
@@ -92,8 +99,6 @@ public class CameraActivity extends AppCompatActivity {
             if (location != null) {
                 currentLatitude = location.getLatitude();
                 currentLongitude = location.getLongitude();
-
-                // CRITICAL: Save location to SharedPreferences for NotificationService
                 saveLocationToSharedPreferences();
             }
         });
@@ -106,7 +111,6 @@ public class CameraActivity extends AppCompatActivity {
         editor.putLong("longitude", Double.doubleToRawLongBits(currentLongitude));
         editor.apply();
 
-        // Also save to Firebase for other users
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         if (uid != null) {
             FirebaseDatabase.getInstance().getReference("users")
@@ -120,6 +124,7 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
+    // --- CAMERA LOGIC ---
     private void askCameraPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
@@ -132,9 +137,13 @@ public class CameraActivity extends AppCompatActivity {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (intent.resolveActivity(getPackageManager()) != null) {
             startActivityForResult(intent, CAMERA_REQUEST_CODE);
-        } else {
-            startActivityForResult(intent, CAMERA_REQUEST_CODE);
         }
+    }
+
+    // --- GALLERY LOGIC ---
+    private void openGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, GALLERY_REQUEST_CODE);
     }
 
     @Override
@@ -148,23 +157,48 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
+    // --- HANDLING RESULTS ---
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        // 1. Handle Camera Result
         if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             capturedBitmap = (Bitmap) data.getExtras().get("data");
-            imgPreview.setImageBitmap(capturedBitmap);
-            imgPreview.setPadding(0, 0, 0, 0);
+            showImageInPreview(capturedBitmap);
         }
+
+        // 2. Handle Gallery Result
+        if (requestCode == GALLERY_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            Uri selectedImageUri = data.getData();
+            if (selectedImageUri != null) {
+                try {
+                    // Convert URI to Bitmap
+                    InputStream imageStream = getContentResolver().openInputStream(selectedImageUri);
+                    capturedBitmap = BitmapFactory.decodeStream(imageStream);
+                    showImageInPreview(capturedBitmap);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
+    // Helper to fix the Preview Glitch
+    private void showImageInPreview(Bitmap bitmap) {
+        imgPreview.setImageBitmap(bitmap);
+        imgPreview.setPadding(0, 0, 0, 0);
+        // CRITICAL FIX: Remove the gray tint so the photo shows clearly
+        imgPreview.setImageTintList(null);
     }
 
     private void uploadPost() {
         if (capturedBitmap == null) {
-            Toast.makeText(this, "Please take a photo first", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please take a photo or select from gallery", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Ensure we have location
         if (currentLatitude == 0.0 || currentLongitude == 0.0) {
             getCurrentLocation();
             Toast.makeText(this, "Getting your location...", Toast.LENGTH_SHORT).show();
@@ -180,8 +214,11 @@ public class CameraActivity extends AppCompatActivity {
         btnUploadReport.setEnabled(false);
         progressBar.setVisibility(View.VISIBLE);
 
+        // Resize bitmap to avoid "Base64 too long" crashes if from Gallery
+        Bitmap resizedBitmap = Bitmap.createScaledBitmap(capturedBitmap, 800, 800, true);
+
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        capturedBitmap.compress(Bitmap.CompressFormat.JPEG, 50, byteArrayOutputStream);
+        resizedBitmap.compress(Bitmap.CompressFormat.JPEG, 60, byteArrayOutputStream);
         String imageBase64 = Base64.encodeToString(byteArrayOutputStream.toByteArray(), Base64.DEFAULT);
 
         String userId = mAuth.getCurrentUser().getUid();
@@ -205,9 +242,6 @@ public class CameraActivity extends AppCompatActivity {
 
                         if (task.isSuccessful()) {
                             Toast.makeText(CameraActivity.this, "Posted Successfully!", Toast.LENGTH_SHORT).show();
-
-                            // IMPORTANT: Notification will be triggered by NotificationService
-                            // The service listens to Firebase changes and sends alerts
                             finish();
                         } else {
                             Toast.makeText(CameraActivity.this, "Upload Failed", Toast.LENGTH_SHORT).show();
@@ -227,7 +261,6 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Update location when activity resumes
         getCurrentLocation();
     }
 }

@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.disasterzone.CommentActivity;
 import com.example.disasterzone.R;
+import com.example.disasterzone.model.Notification;
 import com.example.disasterzone.model.Post;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -63,13 +64,11 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         // --- IMAGE DECODING ---
         if (post.imageUrl != null && !post.imageUrl.isEmpty()) {
             try {
-                // Decode Base64 string to Bitmap
                 byte[] decodedString = Base64.decode(post.imageUrl, Base64.DEFAULT);
                 Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                 holder.imgPost.setImageBitmap(decodedByte);
                 holder.imgPost.setVisibility(View.VISIBLE);
             } catch (Exception e) {
-                // If decoding fails, hide image or show error placeholder
                 holder.imgPost.setVisibility(View.GONE);
             }
         } else {
@@ -78,6 +77,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
         // --- LIKE SYSTEM ---
         DatabaseReference likeRef = FirebaseDatabase.getInstance().getReference("likes").child(post.postId);
+
+        // 1. Check status
         likeRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -92,19 +93,25 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             public void onCancelled(@NonNull DatabaseError error) {}
         });
 
+        // 2. Handle Click
         holder.btnLike.setOnClickListener(v -> {
             if (currentUserId == null) return;
+
             likeRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     if (snapshot.child(currentUserId).exists()) {
+                        // Unlike
                         likeRef.child(currentUserId).removeValue();
                     } else {
+                        // Like
                         likeRef.child(currentUserId).setValue(true);
+
+                        // *** TRIGGER NOTIFICATION (Updated to include postId) ***
+                        sendLikeNotification(post.userId, post.description, post.postId);
                     }
                 }
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {}
+                @Override public void onCancelled(@NonNull DatabaseError error) {}
             });
         });
 
@@ -118,6 +125,23 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
         // --- QR GENERATION ---
         holder.btnQr.setOnClickListener(v -> generateQR("DISASTER_ZONE|" + post.postId));
+    }
+
+    // --- HELPER: SEND NOTIFICATION ---
+    private void sendLikeNotification(String postOwnerId, String postDescription, String postId) {
+        if (postOwnerId.equals(currentUserId)) return; // Don't notify myself
+
+        DatabaseReference notifRef = FirebaseDatabase.getInstance().getReference("notifications").child(postOwnerId);
+        String notifId = notifRef.push().getKey();
+
+        String shortDesc = postDescription.length() > 20 ? postDescription.substring(0, 20) + "..." : postDescription;
+        String message = "Someone liked your report: " + shortDesc;
+
+        if (notifId != null) {
+            // Updated Constructor with postId
+            Notification notif = new Notification(notifId, message, "like", postId, System.currentTimeMillis());
+            notifRef.child(notifId).setValue(notif);
+        }
     }
 
     private void generateQR(String content) {
@@ -157,6 +181,4 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             btnComment = itemView.findViewById(R.id.btnComment);
         }
     }
-
-
 }

@@ -32,7 +32,6 @@ public class CommentActivity extends AppCompatActivity {
     private RecyclerView recyclerComments;
     private CommentAdapter commentAdapter;
     private List<Comment> commentList;
-
     private EditText etComment;
     private Button btnPostComment;
     private ImageView btnBack;
@@ -47,9 +46,7 @@ public class CommentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_comment);
 
         postId = getIntent().getStringExtra("postId");
-
         if (postId == null) {
-            Toast.makeText(this, "Error: No Post ID found", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -71,22 +68,16 @@ public class CommentActivity extends AppCompatActivity {
         loadComments();
 
         btnPostComment.setOnClickListener(v -> postComment());
-
-        if (btnBack != null) {
-            btnBack.setOnClickListener(v -> finish());
-        }
+        if (btnBack != null) btnBack.setOnClickListener(v -> finish());
     }
 
     private void postComment() {
         String commentText = etComment.getText().toString().trim();
-        if (TextUtils.isEmpty(commentText)) {
-            Toast.makeText(this, "Type a comment...", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        if (TextUtils.isEmpty(commentText)) return;
 
         String userId = mAuth.getCurrentUser().getUid();
 
-        // 1. Get Username
+        // 1. Fetch Current User's Name
         mDatabase.child("users").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -96,44 +87,51 @@ public class CommentActivity extends AppCompatActivity {
                     if (user != null) username = user.username;
                 }
 
-                // 2. Save Comment
-                String commentId = mDatabase.child("comments").child(postId).push().getKey();
-                Comment comment = new Comment(commentId, userId, username, commentText, System.currentTimeMillis());
-
-                if (commentId != null) {
-                    mDatabase.child("comments").child(postId).child(commentId).setValue(comment);
-                    etComment.setText("");
-
-                    // 3. Trigger Notification for Post Owner
-                    triggerInteractionNotification(username);
-                }
+                // 2. Save the Comment
+                saveCommentToDb(userId, username, commentText);
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
 
-    private void triggerInteractionNotification(String commenterName) {
-        // Find owner of post
+    private void saveCommentToDb(String userId, String username, String text) {
+        String commentId = mDatabase.child("comments").child(postId).push().getKey();
+        Comment comment = new Comment(commentId, userId, username, text, System.currentTimeMillis());
+
+        if (commentId != null) {
+            mDatabase.child("comments").child(postId).child(commentId).setValue(comment);
+            etComment.setText("");
+
+            // 3. Trigger the Notification with Details
+            triggerInteractionNotification(username, text);
+        }
+    }
+
+    private void triggerInteractionNotification(String commenterName, String commentText) {
+        // Fetch Post details to get the Description/Title
         mDatabase.child("posts").child(postId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 Post post = snapshot.getValue(Post.class);
+
                 if (post != null && !post.userId.equals(mAuth.getCurrentUser().getUid())) {
-                    // Send to owner's notification node
-                    sendInteractionNotification(post.userId, commenterName + " commented on your report", "interaction");
+
+                    String postTitle = post.description;
+                    if (postTitle.length() > 20) postTitle = postTitle.substring(0, 20) + "...";
+
+                    String message = commenterName + " commented: \"" + commentText + "\" on: " + postTitle;
+
+                    DatabaseReference notifRef = mDatabase.child("notifications").child(post.userId);
+                    String notifId = notifRef.push().getKey();
+                    if (notifId != null) {
+                        // Updated Constructor with postId
+                        Notification notif = new Notification(notifId, message, "comment", postId, System.currentTimeMillis());
+                        notifRef.child(notifId).setValue(notif);
+                    }
                 }
             }
             @Override public void onCancelled(@NonNull DatabaseError error) {}
         });
-    }
-
-    private void sendInteractionNotification(String targetUserId, String message, String type) {
-        DatabaseReference notifRef = mDatabase.child("notifications").child(targetUserId);
-        String notifId = notifRef.push().getKey();
-        Notification notif = new Notification(notifId, message, type, System.currentTimeMillis());
-        if (notifId != null) {
-            notifRef.child(notifId).setValue(notif);
-        }
     }
 
     private void loadComments() {
@@ -142,8 +140,8 @@ public class CommentActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 commentList.clear();
                 for (DataSnapshot ds : snapshot.getChildren()) {
-                    Comment comment = ds.getValue(Comment.class);
-                    if (comment != null) commentList.add(comment);
+                    Comment c = ds.getValue(Comment.class);
+                    if (c != null) commentList.add(c);
                 }
                 commentAdapter.notifyDataSetChanged();
             }
