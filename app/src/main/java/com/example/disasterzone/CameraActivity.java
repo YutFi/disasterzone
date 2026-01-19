@@ -2,12 +2,18 @@ package com.example.disasterzone;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioAttributes;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
@@ -22,6 +28,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
 import com.example.disasterzone.model.Post;
@@ -41,9 +49,10 @@ import java.io.InputStream;
 public class CameraActivity extends AppCompatActivity {
 
     private static final int CAMERA_REQUEST_CODE = 100;
-    private static final int GALLERY_REQUEST_CODE = 200; // New Code for Gallery
+    private static final int GALLERY_REQUEST_CODE = 200;
     private static final int CAMERA_PERMISSION_CODE = 101;
     private static final int PERMISSION_REQUEST_CODE = 102;
+    private static final int NOTIFICATION_PERMISSION_CODE = 103;
 
     private ImageView imgPreview;
     private EditText etReportDesc;
@@ -70,15 +79,21 @@ public class CameraActivity extends AppCompatActivity {
         imgPreview = findViewById(R.id.imgPreview);
         etReportDesc = findViewById(R.id.etReportDesc);
         btnCapture = findViewById(R.id.btnCapture);
-        btnGallery = findViewById(R.id.btnGallery); // Init new button
+        btnGallery = findViewById(R.id.btnGallery);
         btnUploadReport = findViewById(R.id.btnUploadReport);
         progressBar = findViewById(R.id.progressBar);
+
+        // Create notification channel
+        createNotificationChannel();
+
+        // Check for notification permission (Android 13+)
+        checkNotificationPermission();
 
         checkPermissions();
 
         // Button Listeners
         btnCapture.setOnClickListener(v -> askCameraPermission());
-        btnGallery.setOnClickListener(v -> openGallery()); // Gallery Listener
+        btnGallery.setOnClickListener(v -> openGallery());
         btnUploadReport.setOnClickListener(v -> uploadPost());
     }
 
@@ -90,6 +105,16 @@ public class CameraActivity extends AppCompatActivity {
                     PERMISSION_REQUEST_CODE);
         } else {
             getCurrentLocation();
+        }
+    }
+
+    private void checkNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.POST_NOTIFICATIONS},
+                        NOTIFICATION_PERMISSION_CODE);
+            }
         }
     }
 
@@ -124,7 +149,6 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
-    // --- CAMERA LOGIC ---
     private void askCameraPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_CODE);
@@ -140,7 +164,6 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
-    // --- GALLERY LOGIC ---
     private void openGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, GALLERY_REQUEST_CODE);
@@ -149,31 +172,37 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == CAMERA_PERMISSION_CODE && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            openCamera();
-        }
-        if (requestCode == PERMISSION_REQUEST_CODE && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            getCurrentLocation();
+
+        if (grantResults.length > 0) {
+            if (requestCode == CAMERA_PERMISSION_CODE && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openCamera();
+            }
+            if (requestCode == PERMISSION_REQUEST_CODE) {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getCurrentLocation();
+                }
+            }
+            if (requestCode == NOTIFICATION_PERMISSION_CODE && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Notification permission granted
+            }
         }
     }
 
-    // --- HANDLING RESULTS ---
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        // 1. Handle Camera Result
+        // Handle Camera Result
         if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             capturedBitmap = (Bitmap) data.getExtras().get("data");
             showImageInPreview(capturedBitmap);
         }
 
-        // 2. Handle Gallery Result
+        // Handle Gallery Result
         if (requestCode == GALLERY_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             Uri selectedImageUri = data.getData();
             if (selectedImageUri != null) {
                 try {
-                    // Convert URI to Bitmap
                     InputStream imageStream = getContentResolver().openInputStream(selectedImageUri);
                     capturedBitmap = BitmapFactory.decodeStream(imageStream);
                     showImageInPreview(capturedBitmap);
@@ -185,11 +214,9 @@ public class CameraActivity extends AppCompatActivity {
         }
     }
 
-    // Helper to fix the Preview Glitch
     private void showImageInPreview(Bitmap bitmap) {
         imgPreview.setImageBitmap(bitmap);
         imgPreview.setPadding(0, 0, 0, 0);
-        // CRITICAL FIX: Remove the gray tint so the photo shows clearly
         imgPreview.setImageTintList(null);
     }
 
@@ -214,7 +241,7 @@ public class CameraActivity extends AppCompatActivity {
         btnUploadReport.setEnabled(false);
         progressBar.setVisibility(View.VISIBLE);
 
-        // Resize bitmap to avoid "Base64 too long" crashes if from Gallery
+        // Resize bitmap
         Bitmap resizedBitmap = Bitmap.createScaledBitmap(capturedBitmap, 800, 800, true);
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -235,12 +262,18 @@ public class CameraActivity extends AppCompatActivity {
                 String postId = mDatabase.child("posts").push().getKey();
                 Post newPost = new Post(postId, userId, username, description, imageBase64, currentLatitude, currentLongitude, System.currentTimeMillis());
 
+                newPost.isActive = true;
+                newPost.endedTimestamp = 0;
+
                 if (postId != null) {
                     mDatabase.child("posts").child(postId).setValue(newPost).addOnCompleteListener(task -> {
                         progressBar.setVisibility(View.GONE);
                         btnUploadReport.setEnabled(true);
 
                         if (task.isSuccessful()) {
+                            // Show thank you notification
+                            showThankYouNotification();
+
                             Toast.makeText(CameraActivity.this, "Posted Successfully!", Toast.LENGTH_SHORT).show();
                             finish();
                         } else {
@@ -256,6 +289,68 @@ public class CameraActivity extends AppCompatActivity {
                 btnUploadReport.setEnabled(true);
             }
         });
+    }
+
+    private void showThankYouNotification() {
+        // Create the notification builder
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "THANK_YOU_CHANNEL")
+                .setSmallIcon(R.drawable.ic_notification)
+                .setContentTitle("DisasterZone")
+                .setContentText("Thank you for submitting the report!")
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true);
+
+        // Add sound
+        Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getPackageName() + "/" + R.raw.basic);
+        builder.setSound(soundUri);
+
+        // Create intent to open the app when notification is tapped
+        Intent intent = new Intent(this, FeedActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent,
+                PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_IMMUTABLE);
+        builder.setContentIntent(pendingIntent);
+
+        // Show the notification
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+        try {
+            // Check notification permission for Android 13+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+                    notificationManager.notify(999, builder.build());
+                }
+            } else {
+                notificationManager.notify(999, builder.build());
+            }
+        } catch (SecurityException e) {
+            e.printStackTrace();
+            // Log or handle the case where notification permission is not granted
+        }
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Thank You Notifications";
+            String description = "Notifications for report submissions";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+
+            NotificationChannel channel = new NotificationChannel("THANK_YOU_CHANNEL", name, importance);
+            channel.setDescription(description);
+
+            // Set sound for the channel
+            Uri soundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" + getPackageName() + "/" + R.raw.basic);
+            AudioAttributes audioAttributes = new AudioAttributes.Builder()
+                    .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                    .setUsage(AudioAttributes.USAGE_NOTIFICATION)
+                    .build();
+            channel.setSound(soundUri, audioAttributes);
+            channel.enableVibration(true);
+
+            // Register the channel with the system
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
     @Override

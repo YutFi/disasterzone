@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,12 +17,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.disasterzone.CommentActivity;
 import com.example.disasterzone.R;
 import com.example.disasterzone.model.Notification;
 import com.example.disasterzone.model.Post;
+import com.google.android.material.card.MaterialCardView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -30,7 +35,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.BarcodeFormat;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
@@ -56,10 +64,35 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Post post = postList.get(position);
+        boolean isActive = post.isActive;
 
+        // Set username
         holder.tvUsername.setText(post.username != null ? post.username : "Anonymous");
+
+        // Set description
         holder.tvDesc.setText(post.description != null ? post.description : "");
-        holder.tvDate.setText(android.text.format.DateFormat.format("dd/MM/yyyy HH:mm", post.timestamp));
+
+        // Format and set date
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMM, hh:mm a", Locale.getDefault());
+        String dateText = sdf.format(new Date(post.timestamp));
+        if (!isActive && post.endedTimestamp > 0) {
+            dateText += " • Ended: " + sdf.format(new Date(post.endedTimestamp));
+        }
+        holder.tvDate.setText(dateText);
+
+        // Set status badge
+        if (isActive) {
+            holder.tvStatusBadge.setText("ACTIVE");
+            holder.tvStatusBadge.setBackgroundResource(R.drawable.bg_status_badge_active);
+            holder.tvStatusBadge.setVisibility(View.VISIBLE);
+        } else {
+            holder.tvStatusBadge.setText("INACTIVE");
+            holder.tvStatusBadge.setBackgroundResource(R.drawable.bg_status_badge_inactive);
+            holder.tvStatusBadge.setVisibility(View.VISIBLE);
+        }
+
+        // Apply visual styling based on activity status
+        applyPostStyling(holder, isActive);
 
         // --- IMAGE DECODING ---
         if (post.imageUrl != null && !post.imageUrl.isEmpty()) {
@@ -67,7 +100,14 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 byte[] decodedString = Base64.decode(post.imageUrl, Base64.DEFAULT);
                 Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
                 holder.imgPost.setImageBitmap(decodedByte);
+
+                // Apply grayscale filter for inactive posts
+                if (!isActive) {
+                    applyGrayscaleFilter(holder.imgPost);
+                }
+
                 holder.imgPost.setVisibility(View.VISIBLE);
+                holder.imgPost.setAlpha(isActive ? 1.0f : 0.7f);
             } catch (Exception e) {
                 holder.imgPost.setVisibility(View.GONE);
             }
@@ -84,6 +124,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (currentUserId != null && snapshot.child(currentUserId).exists()) {
                     holder.imgLike.setImageResource(R.drawable.ic_heart_filled);
+                    if (!isActive) {
+                        holder.imgLike.setColorFilter(ContextCompat.getColor(context, R.color.inactive_color));
+                    }
                 } else {
                     holder.imgLike.setImageResource(R.drawable.ic_heart_outline);
                 }
@@ -93,8 +136,13 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
             public void onCancelled(@NonNull DatabaseError error) {}
         });
 
-        // 2. Handle Click
+        // 2. Handle Like Click (disabled for inactive posts)
         holder.btnLike.setOnClickListener(v -> {
+            if (!isActive) {
+                Toast.makeText(context, "Cannot interact with inactive disasters", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             if (currentUserId == null) return;
 
             likeRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -107,7 +155,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                         // Like
                         likeRef.child(currentUserId).setValue(true);
 
-                        // *** TRIGGER NOTIFICATION (Updated to include postId) ***
+                        // Send notification
                         sendLikeNotification(post.userId, post.description, post.postId);
                     }
                 }
@@ -117,6 +165,11 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
         // --- COMMENT CLICK ---
         holder.btnComment.setOnClickListener(v -> {
+            if (!isActive) {
+                Toast.makeText(context, "Cannot comment on inactive disasters", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             Intent intent = new Intent(context, CommentActivity.class);
             intent.putExtra("postId", post.postId);
             intent.putExtra("authorId", post.userId);
@@ -124,7 +177,44 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         });
 
         // --- QR GENERATION ---
-        holder.btnQr.setOnClickListener(v -> generateQR("DISASTER_ZONE|" + post.postId));
+        holder.btnQr.setOnClickListener(v -> {
+            if (!isActive) {
+                Toast.makeText(context, "Cannot generate QR for inactive disasters", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            generateQR("DISASTER_ZONE|" + post.postId);
+        });
+
+        // Disable/enable interactions based on post status
+        holder.btnQr.setEnabled(isActive);
+        holder.btnQr.setAlpha(isActive ? 1.0f : 0.5f);
+    }
+
+    private void applyPostStyling(ViewHolder holder, boolean isActive) {
+        if (isActive) {
+            // Active post styling
+            holder.postCard.setCardBackgroundColor(ContextCompat.getColor(context, R.color.white));
+            holder.tvUsername.setTextColor(ContextCompat.getColor(context, R.color.active_text));
+            holder.tvDesc.setTextColor(ContextCompat.getColor(context, R.color.active_text));
+            holder.tvDate.setTextColor(ContextCompat.getColor(context, R.color.active_date));
+            holder.tvLikeCount.setTextColor(ContextCompat.getColor(context, R.color.active_date));
+            holder.imgLike.clearColorFilter();
+        } else {
+            // Inactive post styling
+            holder.postCard.setCardBackgroundColor(ContextCompat.getColor(context, R.color.inactive_background));
+            holder.tvUsername.setTextColor(ContextCompat.getColor(context, R.color.inactive_text));
+            holder.tvDesc.setTextColor(ContextCompat.getColor(context, R.color.inactive_text));
+            holder.tvDate.setTextColor(ContextCompat.getColor(context, R.color.inactive_date));
+            holder.tvLikeCount.setTextColor(ContextCompat.getColor(context, R.color.inactive_date));
+            holder.imgLike.setColorFilter(ContextCompat.getColor(context, R.color.inactive_color));
+        }
+    }
+
+    private void applyGrayscaleFilter(ImageView imageView) {
+        ColorMatrix matrix = new ColorMatrix();
+        matrix.setSaturation(0);
+        ColorMatrixColorFilter filter = new ColorMatrixColorFilter(matrix);
+        imageView.setColorFilter(filter);
     }
 
     // --- HELPER: SEND NOTIFICATION ---
@@ -138,7 +228,6 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
         String message = "Someone liked your report: " + shortDesc;
 
         if (notifId != null) {
-            // Updated Constructor with postId
             Notification notif = new Notification(notifId, message, "like", postId, System.currentTimeMillis());
             notifRef.child(notifId).setValue(notif);
         }
@@ -164,18 +253,22 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public ImageView imgPost, imgLike, btnQr;
-        public TextView tvUsername, tvDesc, tvDate, tvLikeCount;
+        public MaterialCardView postCard;
+        public TextView tvStatusBadge, tvUsername, tvDesc, tvDate, tvLikeCount;
+        public ImageView imgAvatar, imgPost, imgLike, btnQr;
         public LinearLayout btnLike, btnComment;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            imgPost = itemView.findViewById(R.id.imgPost);
-            imgLike = itemView.findViewById(R.id.imgLike);
-            btnQr = itemView.findViewById(R.id.btnQr);
+            postCard = itemView.findViewById(R.id.postCard);
+            tvStatusBadge = itemView.findViewById(R.id.tvStatusBadge);
+            imgAvatar = itemView.findViewById(R.id.imgAvatar);
             tvUsername = itemView.findViewById(R.id.tvUsername);
-            tvDesc = itemView.findViewById(R.id.tvDesc);
             tvDate = itemView.findViewById(R.id.tvDate);
+            btnQr = itemView.findViewById(R.id.btnQr);
+            imgPost = itemView.findViewById(R.id.imgPost);
+            tvDesc = itemView.findViewById(R.id.tvDesc);
+            imgLike = itemView.findViewById(R.id.imgLike);
             tvLikeCount = itemView.findViewById(R.id.tvLikeCount);
             btnLike = itemView.findViewById(R.id.btnLike);
             btnComment = itemView.findViewById(R.id.btnComment);

@@ -176,7 +176,7 @@ public class FeedActivity extends AppCompatActivity {
     }
 
     private void loadPosts() {
-        postsRef.addValueEventListener(new ValueEventListener() {
+        postsRef.orderByChild("timestamp").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 postList.clear();
@@ -184,15 +184,34 @@ public class FeedActivity extends AppCompatActivity {
                     try {
                         Post post = ds.getValue(Post.class);
                         if (post != null) {
-                            postList.add(post);
+                            // Check if post is inactive and older than 24 hours
+                            if (!post.isActive) {
+                                long inactiveDuration = System.currentTimeMillis() - post.endedTimestamp;
+                                long oneDayInMillis = 24 * 60 * 60 * 1000;
+
+                                // Skip if inactive for more than 24 hours
+                                if (inactiveDuration > oneDayInMillis) {
+                                    continue;
+                                }
+                            }
+                            // Add to beginning for reverse chronological order
+                            postList.add(0, post);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
                 feedAdapter.notifyDataSetChanged();
+
+                // Show message if no posts
+                if (postList.isEmpty()) {
+                    Toast.makeText(FeedActivity.this, "No disaster reports available", Toast.LENGTH_SHORT).show();
+                }
             }
-            @Override public void onCancelled(@NonNull DatabaseError error) {}
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(FeedActivity.this, "Failed to load posts: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
         });
     }
 

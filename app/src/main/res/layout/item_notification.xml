@@ -4,52 +4,25 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
-    android:padding="12dp">
+    android:padding="16dp">
 
+    <!-- Icon on the left -->
     <ImageView
         android:id="@+id/imgNotifIcon"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:src="@drawable/ic_heart_filled"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
 
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginStart="12dp"
-        android:layout_marginEnd="12dp"
-        app:layout_constraintStart_toEndOf="@id/imgNotifIcon"
-        app:layout_constraintEnd_toStartOf="@id/imgPostPreview"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <TextView
-            android:id="@+id/tvNotifMessage"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="User liked your post"
-            android:textColor="#000000"
-            android:textSize="14sp" />
-
-        <TextView
-            android:id="@+id/tvNotifDate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="2 mins ago"
-            android:textColor="#757575"
-            android:textSize="12sp"
-            android:layout_marginTop="2dp"/>
-    </LinearLayout>
-
+    <!-- Preview image on the right -->
     <androidx.cardview.widget.CardView
         android:id="@+id/cvPreview"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="0dp"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        app:cardCornerRadius="10dp"
+        app:cardElevation="2dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
@@ -59,7 +32,44 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:background="#EEEEEE" />
+            android:background="#F0F0F0"
+            android:contentDescription="Post preview" />
     </androidx.cardview.widget.CardView>
+
+    <!-- Text content in the middle with proper constraints -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="12dp"
+        app:layout_constraintStart_toEndOf="@id/imgNotifIcon"
+        app:layout_constraintEnd_toStartOf="@id/cvPreview"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <!-- Notification message with max lines and ellipsis -->
+        <TextView
+            android:id="@+id/tvNotifMessage"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="User liked your post"
+            android:textColor="#000000"
+            android:textSize="15sp"
+            android:textStyle="normal"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:lineSpacingExtra="2dp" />
+
+        <!-- Date with proper spacing -->
+        <TextView
+            android:id="@+id/tvNotifDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="2 mins ago"
+            android:textColor="#757575"
+            android:textSize="13sp"
+            android:layout_marginTop="4dp"/>
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

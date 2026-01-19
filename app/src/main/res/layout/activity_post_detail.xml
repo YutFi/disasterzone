@@ -12,13 +12,18 @@
         android:layout_height="wrap_content"
         android:paddingBottom="40dp">
 
+        <!-- Image Card -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardImage"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="350dp"
-            android:layout_margin="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
             app:cardCornerRadius="24dp"
             app:cardElevation="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
@@ -45,6 +50,7 @@
                 app:tint="#202124" />
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Avatar -->
         <ImageView
             android:id="@+id/imgAvatar"
             android:layout_width="48dp"
@@ -54,11 +60,13 @@
             android:background="@drawable/bg_circle_gray"
             android:padding="10dp"
             android:src="@drawable/ic_person"
-            app:tint="#5F6368"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/cardImage" />
+            app:layout_constraintTop_toBottomOf="@id/cardImage"
+            app:tint="#5F6368" />
 
+        <!-- Username and Date -->
         <LinearLayout
+            android:id="@+id/userInfoLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -73,6 +81,8 @@
                 android:id="@+id/detailTvUsername"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:text="Anonymous User"
                 android:textColor="#202124"
                 android:textSize="18sp"
@@ -88,15 +98,20 @@
                 android:textSize="13sp" />
         </LinearLayout>
 
+        <!-- Divider -->
         <View
             android:id="@+id/divider"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="1dp"
-            android:layout_marginHorizontal="24dp"
+            android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
             android:background="#E0E0E0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/imgAvatar" />
 
+        <!-- Report Details Label -->
         <TextView
             android:id="@+id/tvLabelDesc"
             android:layout_width="wrap_content"
@@ -110,12 +125,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/divider" />
 
+        <!-- Description -->
         <TextView
             android:id="@+id/detailTvDesc"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="24dp"
+            android:layout_marginStart="24dp"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="24dp"
             android:lineSpacingExtra="6dp"
             android:text="Heavy flooding reported in the downtown area. Please avoid the main bridge as water levels are rising rapidly."
             android:textColor="#3C4043"
@@ -124,40 +141,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvLabelDesc" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="24dp"
-            android:layout_marginTop="32dp"
-            android:orientation="horizontal">
 
-            <com.google.android.material.chip.Chip
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Alert"
-                android:textColor="#D32F2F"
-                app:chipBackgroundColor="#FCE8E6"
-                app:chipStrokeWidth="0dp"/>
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:layout_weight="1"/>
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:src="@android:drawable/stat_notify_chat"
-                app:tint="#5F6368"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Comments"
-                android:layout_marginStart="8dp"
-                android:layout_gravity="center_vertical"/>
-
-        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

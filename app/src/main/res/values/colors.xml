@@ -17,6 +17,16 @@
     <color name="warning_orange">#FF9800</color>
     <color name="alert_red">#D32F2F</color>
 
+    <!-- Add these colors for active/inactive states -->
+    <color name="active_color">#D32F2F</color>
+    <color name="inactive_color">#757575</color>
+    <color name="active_background">#FFEBEE</color>
+    <color name="inactive_background">#F5F5F5</color>
+    <color name="active_text">#202124</color>
+    <color name="inactive_text">#9E9E9E</color>
+    <color name="active_date">#5F6368</color>
+    <color name="inactive_date">#BDBDBD</color>
+
     <!-- Text colors -->
     <color name="text_primary_light">#FFFFFF</color>
     <color name="text_secondary_light">#B0BEC5</color>
