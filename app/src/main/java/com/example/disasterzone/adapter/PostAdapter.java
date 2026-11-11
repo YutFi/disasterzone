@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder> {
+    private int lastAnimatedPosition = -1;
 
     private Context context;
     private List<Post> postList;
@@ -53,6 +54,14 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostViewHolder
 
     @Override
     public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
+        if (position > lastAnimatedPosition) {
+            com.example.disasterzone.util.Anim.listItem(holder.itemView, position);
+            lastAnimatedPosition = position;
+        } else {
+            holder.itemView.animate().cancel();
+            holder.itemView.setAlpha(1f);
+            holder.itemView.setTranslationY(0f);
+        }
         Post post = postList.get(position);
 
         holder.tvUser.setText(post.username);

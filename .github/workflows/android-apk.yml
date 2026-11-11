@@ -1,0 +1,81 @@
+name: Build Android APK
+
+# - Every push to main / modernize: runs the unit tests and builds the APK (download it from the run's "Artifacts").
+# - Push a tag like v2.0 (git tag v2.0 && git push origin v2.0): also publishes the APK as a GitHub Release.
+
+on:
+  push:
+    branches: [master, main, modernize]
+    tags: ['v*']
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Unit tests + release build
+        shell: bash
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon --console=plain testDebugUnitTest assembleRelease 2>&1 | tee build.log
+
+      - name: Show build errors as annotations
+        if: failure()
+        shell: bash
+        run: |
+          esc() { sed -e 's/%/%25/g' | awk 'BEGIN{ORS="%0A"} {print substr($0,1,300)}'; }
+          errs=$(grep -nE "error:|e: |FAILED|AAPT|Could not|cannot find symbol|does not exist|What went wrong" build.log | head -30 | esc)
+          ctx=$(awk '/What went wrong/{f=1} f&&c<14{print; c++}' build.log | esc)
+          echo "::error title=Build errors::${errs}"
+          echo "::error title=Gradle summary::${ctx}"
+
+      - name: Name the APK
+        shell: bash
+        run: |
+          mkdir -p dist
+          cp app/build/outputs/apk/release/app-release.apk dist/DisasterZone.apk
+          ls -la dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DisasterZone-apk
+          path: dist/DisasterZone.apk
+
+      # Pushing a tag (v*) publishes a release for that tag.
+      - name: Publish GitHub Release (version tag)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/DisasterZone.apk
+          generate_release_notes: true
+
+      # Pushing to main keeps the "v2.0" release (and its APK) up to date, so the download link always works.
+      - name: Publish / refresh release v2.0 (main)
+        if: github.ref == 'refs/heads/master'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v2.0
+          target_commitish: ${{ github.sha }}
+          name: DisasterZone 2.0
+          make_latest: true
+          files: dist/DisasterZone.apk
+          body: |
+            Android APK for DisasterZone 2.0 (disaster alerts, safety guide, community feed, map).
+            Download `DisasterZone.apk`, allow installs from your browser/file manager, then open it.
+            If you have the old app installed, uninstall it first (this build uses a different signing key).
+            Web companion (safety guide): https://yutfi.github.io/disasterzone/

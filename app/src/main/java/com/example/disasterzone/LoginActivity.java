@@ -21,6 +21,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        com.example.disasterzone.util.Anim.popIn(findViewById(R.id.logo), 100);
+        com.example.disasterzone.util.Anim.enter(findViewById(android.R.id.content), 0);
 
         mAuth = FirebaseAuth.getInstance();
 
