@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DisasterZone – Malaysia emergency guide</title>
+<meta name="description" content="Emergency numbers, a preparedness checklist and quick safety tips for floods, fires and landslides in Malaysia. Companion to the DisasterZone Android app.">
+<meta name="theme-color" content="#0D47A1">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 64 64%27%3E%3Crect width=%2764%27 height=%2764%27 rx=%2714%27 fill=%27%230D47A1%27/%3E%3Cpath d=%27M32 10l18 7v13c0 12-8 20-18 24C22 50 14 42 14 30V17z%27 fill=%27%23fff%27/%3E%3Cpath d=%27M32 22v14M32 41v2%27 stroke=%27%23D32F2F%27 stroke-width=%275%27 stroke-linecap=%27round%27/%3E%3C/svg%3E">
+<style>
+:root{--primary:#0D47A1;--primary2:#1976D2;--accent:#D32F2F;--bg:#EEF2F8;--card:#fff;--text:#1d2733;--muted:#5b6b7c;--ok:#2E7D32;--warn:#FF8F00;--line:#e3e9f1;--shadow:0 6px 18px rgba(13,71,161,.08)}
+@media(prefers-color-scheme:dark){:root{--bg:#0c1624;--card:#14233a;--text:#e8eef7;--muted:#9fb1c7;--line:#223652;--shadow:0 6px 18px rgba(0,0,0,.35)}}
+:root[data-theme=dark]{--bg:#0c1624;--card:#14233a;--text:#e8eef7;--muted:#9fb1c7;--line:#223652;--shadow:0 6px 18px rgba(0,0,0,.35)}
+:root[data-theme=light]{--bg:#EEF2F8;--card:#fff;--text:#1d2733;--muted:#5b6b7c;--line:#e3e9f1;--shadow:0 6px 18px rgba(13,71,161,.08)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.55}
+a{color:inherit}
+.hero{position:relative;overflow:hidden;color:#fff;text-align:center;padding:56px 20px 64px;background:linear-gradient(135deg,#0D47A1,#1976D2 60%,#42A5F5)}
+.hero::before,.hero::after{content:"";position:absolute;border-radius:50%;background:rgba(255,255,255,.08);animation:drift 14s ease-in-out infinite}
+.hero::before{width:380px;height:380px;left:-120px;top:-140px}.hero::after{width:300px;height:300px;right:-90px;bottom:-130px;animation-delay:-6s}
+@keyframes drift{0%,100%{transform:translate(0,0)}50%{transform:translate(30px,20px)}}
+.logo{width:84px;height:84px;margin:0 auto 12px;animation:pop .8s cubic-bezier(.2,1.4,.4,1) both,floaty 5s ease-in-out 1s infinite}
+@keyframes pop{from{opacity:0;transform:scale(.4)}to{opacity:1;transform:none}}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+h1{margin:0;font-size:clamp(30px,6vw,46px);font-weight:800;letter-spacing:-.5px;animation:up .7s .15s both}
+.sub{margin:6px 0 0;opacity:.92;animation:up .7s .25s both}
+@keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+nav{position:sticky;top:0;z-index:10;display:flex;gap:4px;justify-content:center;flex-wrap:wrap;padding:10px;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+nav a{text-decoration:none;font-weight:600;font-size:14px;padding:8px 14px;border-radius:99px;color:var(--muted);transition:background .2s,color .2s}
+nav a:hover,nav a.on{background:var(--primary);color:#fff}
+#theme{margin-left:6px;border:1px solid var(--line);background:transparent;color:var(--text);border-radius:99px;padding:6px 12px;cursor:pointer;font-size:14px}
+main{max-width:760px;margin:22px auto 0;padding:0 16px 40px;position:relative}
+.card{background:var(--card);border-radius:18px;padding:22px;margin-bottom:18px;box-shadow:var(--shadow);border:1px solid var(--line)}
+.reveal{opacity:0;transform:translateY(26px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+h2{margin:0 0 14px;font-size:19px;color:var(--primary2);display:flex;gap:8px;align-items:center}
+.sos{text-align:center;background:linear-gradient(135deg,#FFEBEE,#FFCDD2);border-color:#ffcdd2}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]) .sos{background:linear-gradient(135deg,#3a1b21,#4b2229);border-color:#6d2a33}}
+:root[data-theme=dark] .sos{background:linear-gradient(135deg,#3a1b21,#4b2229);border-color:#6d2a33}
+.sos small{display:block;color:var(--accent);font-weight:700;letter-spacing:1px;text-transform:uppercase;font-size:12px}
+.call999{display:block;margin:8px 0;background:var(--accent);color:#fff;text-decoration:none;font-size:34px;font-weight:900;padding:16px;border-radius:14px;box-shadow:0 8px 22px rgba(211,47,47,.35);animation:beat 2s ease-in-out infinite;transition:transform .15s}
+.call999:hover{transform:translateY(-2px)}.call999:active{transform:scale(.98)}
+@keyframes beat{0%,100%{box-shadow:0 8px 22px rgba(211,47,47,.35),0 0 0 0 rgba(211,47,47,.45)}50%{box-shadow:0 8px 22px rgba(211,47,47,.35),0 0 0 14px rgba(211,47,47,0)}}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border:0;padding-bottom:0}
+.row b{display:block}.row span{color:var(--muted);font-size:13px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{text-decoration:none;font-weight:600;font-size:13px;padding:8px 14px;border-radius:9px;border:1px solid var(--primary2);color:var(--primary2);transition:transform .15s,background .2s,color .2s}
+.btn:hover{transform:translateY(-2px);background:var(--primary2);color:#fff}
+.btn.red{border-color:var(--accent);color:var(--accent)}.btn.red:hover{background:var(--accent);color:#fff}
+.btn.solid{background:var(--primary);color:#fff;border-color:var(--primary)}
+.doe{background:color-mix(in srgb,var(--primary2) 12%,transparent);border-radius:12px;padding:14px;font-size:14px}
+/* checklist */
+.prog{display:flex;align-items:center;gap:16px;margin-bottom:14px}
+.ring{--p:0;width:64px;height:64px;border-radius:50%;background:conic-gradient(var(--ok) calc(var(--p)*1%),var(--line) 0);display:grid;place-items:center;transition:background .4s;flex:none}
+.ring i{width:48px;height:48px;border-radius:50%;background:var(--card);display:grid;place-items:center;font-style:normal;font-weight:800;font-size:14px}
+.check{display:flex;gap:12px;align-items:flex-start;padding:10px 8px;border-radius:10px;cursor:pointer;transition:background .2s}
+.check:hover{background:color-mix(in srgb,var(--primary2) 8%,transparent)}
+.check input{position:absolute;opacity:0}
+.box{flex:none;width:24px;height:24px;border-radius:7px;border:2px solid var(--muted);display:grid;place-items:center;transition:all .25s;color:transparent;font-weight:900;margin-top:1px}
+.check input:checked+.box{background:var(--ok);border-color:var(--ok);color:#fff;transform:scale(1.12)}
+.check input:focus-visible+.box{outline:3px solid var(--primary2);outline-offset:2px}
+.check input:checked~.t{text-decoration:line-through;color:var(--muted)}
+.mini{background:none;border:0;color:var(--muted);cursor:pointer;text-decoration:underline;font-size:13px}
+/* tips */
+.tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.tabs button{border:1px solid var(--line);background:transparent;color:var(--text);border-radius:99px;padding:8px 16px;font-weight:600;cursor:pointer;transition:all .2s}
+.tabs button.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+.tip{display:none;margin:0;padding-left:0;list-style:none}.tip.on{display:block}
+.tip li{display:flex;gap:10px;padding:8px 0;animation:up .4s both}
+.tip li:nth-child(2){animation-delay:.05s}.tip li:nth-child(3){animation-delay:.1s}.tip li:nth-child(4){animation-delay:.15s}.tip li:nth-child(5){animation-delay:.2s}.tip li:nth-child(6){animation-delay:.25s}
+.tip li::before{content:"✔";color:var(--ok);font-weight:800}
+.tip.dont li::before{content:"✖";color:var(--accent)}
+.steps{counter-reset:s;padding:0;margin:0;list-style:none}
+.steps li{display:flex;gap:12px;margin-bottom:14px}
+.steps li::before{counter-increment:s;content:counter(s);flex:none;width:26px;height:26px;border-radius:50%;background:var(--primary);color:#fff;font-weight:700;font-size:13px;display:grid;place-items:center;margin-top:2px}
+.note{border-left:5px solid var(--warn)}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:10px 20px 40px}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><path d="M32 6l22 8v16c0 14-9 24-22 28C19 54 10 44 10 30V14z" fill="#fff"/><path d="M32 20v18" stroke="#D32F2F" stroke-width="6" stroke-linecap="round"/><circle cx="32" cy="46" r="3.6" fill="#D32F2F"/></svg>
+  <h1>DisasterZone</h1>
+  <p class="sub">Malaysia emergency guide &amp; community safety companion</p>
+</header>
+<nav id="nav" aria-label="Sections">
+  <a href="#help" class="on">Get help</a><a href="#prepare">Prepare</a><a href="#tips">Safety tips</a><a href="#app">Get the app</a>
+  <button id="theme" aria-label="Toggle dark mode">🌓</button>
+</nav>
+<main>
+  <section id="help">
+    <div class="card sos reveal">
+      <small>Emergency response services</small>
+      <a class="call999" href="tel:999">📞 CALL 999</a>
+      <div style="font-size:13px;color:var(--accent)">Police · Fire &amp; Rescue · Ambulance · Civil Defence &nbsp;(112 also works from a mobile phone)</div>
+    </div>
+    <div class="card reveal">
+      <h2>⚠️ Disaster-specific lines</h2>
+      <div class="row"><div><b>Flood &amp; fire</b><span>Rescue department</span></div><div class="btns"><a class="btn red" href="tel:999">📞 Dial 999</a></div></div>
+      <div class="row"><div><b>Landslide / sinkhole</b><span>Department of Environment (DOE)</span></div><div class="btns"><a class="btn red" href="tel:0388891972">📞 Call</a><a class="btn" href="https://www.doe.gov.my" rel="noopener">🌐 Web</a></div></div>
+      <div class="row"><div><b>Pollution complaint</b><span>24-hour hotline</span></div><div class="btns"><a class="btn red" href="tel:1800882727">📞 Call</a><a class="btn" href="https://www.doe.gov.my" rel="noopener">🌐 Web</a></div></div>
+    </div>
+    <div class="card reveal">
+      <h2>🏢 Department of Environment</h2>
+      <div class="doe"><b>HQ Putrajaya</b><br>Levels 1–4, Podium 2 &amp; 3, Menara PETRA,<br>No.25, Persiaran Perdana, Precint 4,<br>62574 Putrajaya.</div>
+      <div class="btns" style="margin-top:12px"><a class="btn red" href="tel:0388712000">📞 General line</a><a class="btn" href="https://www.doe.gov.my" rel="noopener">🌐 Official portal</a></div>
+    </div>
+    <div class="card note reveal">
+      <h2 style="color:var(--warn)">📝 Notes for the caller</h2>
+      <ul class="tip on" style="margin:0"><li><span><b>Stay calm</b> and speak clearly to the operator.</span></li><li><span><b>Give your exact location</b> – address, landmarks, road names.</span></li><li><span><b>Safety first:</b> never put yourself in danger to make a report.</span></li></ul>
+    </div>
+  </section>
+
+  <section id="prepare">
+    <div class="card reveal">
+      <h2>🎒 Emergency readiness checklist</h2>
+      <div class="prog"><div class="ring" id="ring"><i id="pct">0%</i></div><div><b id="progTxt">0 of 0 done</b><br><button class="mini" id="clear">Reset checklist</button></div></div>
+      <div id="list"></div>
+      <p style="font-size:12px;color:var(--muted);margin:10px 0 0">Ticks are saved on this device only.</p>
+    </div>
+  </section>
+
+  <section id="tips">
+    <div class="card reveal">
+      <h2>🛟 Quick safety tips</h2>
+      <div class="tabs" role="tablist"><button class="on" data-k="flood">🌊 Flood</button><button data-k="fire">🔥 Fire</button><button data-k="land">⛰️ Landslide</button></div>
+      <ul class="tip on" id="t-flood"><li>Move to higher ground early; do not wait for water to enter the house.</li><li>Switch off the main power and gas if it is safe to reach the switch.</li><li>Take your emergency bag, documents and medicines.</li><li>Follow official evacuation instructions and use the routes you are told to use.</li><li>Keep children and pets with you.</li></ul>
+      <ul class="tip dont" id="t-flood-d"><li>Do not walk, swim or drive through floodwater – it can be deeper and faster than it looks.</li><li>Do not touch electrical equipment while standing in water.</li></ul>
+      <ul class="tip" id="t-fire"><li>Get out first, then call 999. Stay out.</li><li>Stay low if there is smoke and feel closed doors with the back of your hand before opening.</li><li>Use stairs, never lifts.</li><li>If clothes catch fire: stop, drop and roll.</li></ul>
+      <ul class="tip dont" id="t-fire-d"><li>Do not go back inside for belongings.</li><li>Do not use water on cooking-oil or electrical fires.</li></ul>
+      <ul class="tip" id="t-land"><li>Warning signs: new cracks in the ground or walls, tilting trees or poles, muddy streams, unusual rumbling.</li><li>If you see signs, leave the area immediately, moving sideways away from the slope path.</li><li>Report it – DOE line above, or 999 if people are in danger.</li><li>Stay away from the slope after the slide: more ground may move.</li></ul>
+      <ul class="tip dont" id="t-land-d"><li>Do not stay near a slope during or just after heavy, prolonged rain.</li></ul>
+    </div>
+  </section>
+
+  <section id="app">
+    <div class="card reveal">
+      <h2>📱 About the DisasterZone app</h2>
+      <p style="margin-top:0">A community-driven platform: people photograph and report nearby incidents, and others nearby are warned.</p>
+      <ol class="steps">
+        <li><div><b>Report an incident</b><br><span style="color:var(--muted)">Tap the camera icon, snap the disaster and submit.</span></div></li>
+        <li><div><b>Check the live map</b><br><span style="color:var(--muted)">Red circles show danger zones (1 km radius).</span></div></li>
+        <li><div><b>Get safety alerts</b><br><span style="color:var(--muted)">Keep the app installed – it alerts you when you get near a danger zone.</span></div></li>
+      </ol>
+      <div class="btns"><a class="btn solid" href="https://github.com/YutFi/disasterzone/releases/latest">⬇ Download Android APK</a><a class="btn" href="https://github.com/YutFi/disasterzone">View source</a></div>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:0">The live feed, map and alerts need the Android app and an internet connection. This web page is the offline-friendly guide only.</p>
+    </div>
+  </section>
+</main>
+<footer>© 2026 DisasterZone Malaysia · A community safety initiative.<br>Numbers and tips are general guidance – follow instructions from the authorities in an emergency.</footer>
+
+<script>
+(function(){
+  'use strict';
+  var ITEMS=['Torch / flashlight and spare batteries','Power bank, fully charged','Drinking water (about 3 litres per person per day)','Non-perishable food for 3 days','First-aid kit and personal medicines','Copies of IC, passport and insurance in a waterproof bag','Cash in small notes','Whistle and a battery or crank radio','Family meeting point and emergency contacts written down','Know your nearest evacuation centre'];
+  var KEY='dz.checklist.v1',done={};
+  try{done=JSON.parse(localStorage.getItem(KEY))||{}}catch(e){}
+  var list=document.getElementById('list');
+  ITEMS.forEach(function(t,i){
+    var l=document.createElement('label');l.className='check';
+    l.innerHTML='<input type="checkbox"><span class="box">✓</span><span class="t"></span>';
+    l.querySelector('.t').textContent=t;
+    var c=l.querySelector('input');c.checked=!!done[i];
+    c.addEventListener('change',function(){done[i]=c.checked;try{localStorage.setItem(KEY,JSON.stringify(done))}catch(e){}update()});
+    list.appendChild(l);
+  });
+  function update(){
+    var n=0;ITEMS.forEach(function(_,i){if(done[i])n++});
+    var p=Math.round(n/ITEMS.length*100);
+    document.getElementById('ring').style.setProperty('--p',p);
+    document.getElementById('pct').textContent=p+'%';
+    document.getElementById('progTxt').textContent=n+' of '+ITEMS.length+' done'+(n===ITEMS.length?' – well prepared! 🎉':'');
+  }
+  document.getElementById('clear').addEventListener('click',function(){done={};try{localStorage.removeItem(KEY)}catch(e){}list.querySelectorAll('input').forEach(function(c){c.checked=false});update()});
+  update();
+
+  var tabs=document.querySelectorAll('.tabs button');
+  tabs.forEach(function(b){b.addEventListener('click',function(){
+    tabs.forEach(function(x){x.classList.toggle('on',x===b)});
+    document.querySelectorAll('.tip[id^=t-]').forEach(function(u){u.classList.remove('on')});
+    document.getElementById('t-'+b.dataset.k).classList.add('on');document.getElementById('t-'+b.dataset.k+'-d').classList.add('on');
+  })});
+  document.getElementById('t-flood-d').classList.add('on');
+
+  /* reveal on scroll */
+  var io=('IntersectionObserver' in window)?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12}):null;
+  document.querySelectorAll('.reveal').forEach(function(el){io?io.observe(el):el.classList.add('in')});
+
+  /* highlight current section in nav */
+  var links=[].slice.call(document.querySelectorAll('#nav a'));
+  var so=('IntersectionObserver' in window)?new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){links.forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id)})}})},{rootMargin:'-40% 0px -55% 0px'}):null;
+  if(so)document.querySelectorAll('main section').forEach(function(s){so.observe(s)});
+
+  /* theme */
+  var root=document.documentElement,TK='dz.theme';
+  try{var t=localStorage.getItem(TK);if(t)root.setAttribute('data-theme',t)}catch(e){}
+  document.getElementById('theme').addEventListener('click',function(){
+    var cur=root.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+    var nx=cur==='dark'?'light':'dark';root.setAttribute('data-theme',nx);try{localStorage.setItem(TK,nx)}catch(e){}
+  });
+})();
+</script>
+</body>
+</html>

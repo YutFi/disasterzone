@@ -24,6 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.List;
 
 public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapter.ViewHolder> {
+    private int lastAnimatedPosition = -1;
 
     private Context context;
     private List<Notification> notificationList;
@@ -42,6 +43,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        if (position > lastAnimatedPosition) {
+            com.example.disasterzone.util.Anim.listItem(holder.itemView, position);
+            lastAnimatedPosition = position;
+        } else {
+            holder.itemView.animate().cancel();
+            holder.itemView.setAlpha(1f);
+            holder.itemView.setTranslationY(0f);
+        }
         Notification notif = notificationList.get(position);
 
         holder.tvMessage.setText(notif.message);

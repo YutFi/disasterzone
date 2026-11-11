@@ -26,6 +26,7 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        com.example.disasterzone.util.Anim.enter(findViewById(android.R.id.content), 0);
 
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();

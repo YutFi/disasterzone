@@ -24,6 +24,16 @@
         <!-- Text colors -->
         <item name="android:textColorPrimary">@color/text_dark</item>
         <item name="android:textColorSecondary">@color/text_grey</item>
+
+        <!-- Smooth slide + fade between screens -->
+        <item name="android:windowAnimationStyle">@style/Animation.DZ.Activity</item>
+    </style>
+
+    <style name="Animation.DZ.Activity" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/screen_enter</item>
+        <item name="android:activityOpenExitAnimation">@anim/screen_exit</item>
+        <item name="android:activityCloseEnterAnimation">@anim/screen_pop_enter</item>
+        <item name="android:activityCloseExitAnimation">@anim/screen_pop_exit</item>
     </style>
 
 </resources>

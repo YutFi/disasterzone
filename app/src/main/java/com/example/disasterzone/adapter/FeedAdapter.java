@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
+    private int lastAnimatedPosition = -1;
 
     private final Context context;
     private final List<Post> postList;
@@ -63,6 +64,14 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        if (position > lastAnimatedPosition) {
+            com.example.disasterzone.util.Anim.listItem(holder.itemView, position);
+            lastAnimatedPosition = position;
+        } else {
+            holder.itemView.animate().cancel();
+            holder.itemView.setAlpha(1f);
+            holder.itemView.setTranslationY(0f);
+        }
         Post post = postList.get(position);
         boolean isActive = post.isActive;
 
@@ -142,6 +151,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedAdapter.ViewHolder> {
                 Toast.makeText(context, "Cannot interact with inactive disasters", Toast.LENGTH_SHORT).show();
                 return;
             }
+            com.example.disasterzone.util.Anim.bounce(holder.imgLike);
 
             if (currentUserId == null) return;
 
